@@ -87,9 +87,14 @@ var gulp = require('gulp'),
             .pipe(connect.reload())
         });
 
+        gulp.task('images', function(){
+          gulp.src('builds/development/images/**/*.*')//sets source to all folders and files in images directory
+        });
+
         gulp.task("watch",function(){
           gulp.watch(htmlSources, ['html']);
           gulp.watch(jsonSources, ['json']);
+          gulp.watch('builds/development/images/**/*.*', ['images']);
           gulp.watch(coffeeSources, ['coffee']);
           gulp.watch(jsSources, ['js']);
           gulp.watch('components/sass/*.scss', ['compass']);
@@ -102,4 +107,4 @@ var gulp = require('gulp'),
             });
         });
 
-        gulp.task('default', ['html', 'json', 'coffee', 'js', 'compass', 'connect', 'watch']);
+        gulp.task('default', ['html', 'json', 'coffee', 'js', 'compass', 'images', 'connect', 'watch']);
