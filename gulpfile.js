@@ -15,6 +15,15 @@ var gulp = require('gulp'),
         outputDir,
         sassStyle;
 
+        env = process.env.NODE_ENV || 'development';
+
+        if(env==='development'){
+          outputDir = 'builds/development/';
+          sassStyle = 'expanded';
+        }else{
+          outputDir = 'builds/production/';
+          sassStyle = 'compressed';
+        }
 
         coffeeSources = ['components/coffee/tagline.coffee'];
         jsSources = [
@@ -24,9 +33,12 @@ var gulp = require('gulp'),
           'components/scripts/template.js'
         ];
         sassSources = ['components/sass/style.scss'];
-        htmlSources = ['builds/development/*.html'];
-        jsonSources = ['builds/development/js/*.json'];
+        htmlSources = [outputDir + '*.html'];
+        jsonSources = [outputDir + 'js/*.json'];
 
+
+
+//------------------------------Tasks-----------------------------------------//
 
         gulp.task('coffee', function() {
           gulp.src(coffeeSources)
@@ -39,7 +51,7 @@ var gulp = require('gulp'),
           gulp.src(jsSources)
             .pipe(concat('script.js'))
             .pipe(browserify())
-            .pipe(gulp.dest('builds/development/js'))
+            .pipe(gulp.dest(outputDir + 'js'))
             .pipe(connect.reload())
         });
 
@@ -47,12 +59,12 @@ var gulp = require('gulp'),
           gulp.src(sassSources)
             .pipe(compass({
               sass: 'components/sass',
-              image: 'builds/development/images',
-              style: 'expanded',
+              image: outputDir + 'images',
+              style: sassStyle,
               lineNumbers: true
             })
             .on('error', gutil.log))
-            .pipe(gulp.dest('builds/development/css'))
+            .pipe(gulp.dest(outputDir + 'css'))
             .pipe(connect.reload())
         });
 
@@ -76,7 +88,7 @@ var gulp = require('gulp'),
 
         gulp.task('connect', function(){
             connect.server({
-              root: 'builds/development/',
+              root: outputDir,
               livereload: true
             });
         });
